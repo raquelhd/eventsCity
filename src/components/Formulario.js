@@ -69,6 +69,7 @@ const Formulario = ({
             description
         }
 
+
         if(id) {
             // Editando
             newEventCity.id = id
@@ -92,6 +93,7 @@ const Formulario = ({
         setDescription('')
 
     }
+
 
 
     return (
@@ -220,6 +222,7 @@ const Formulario = ({
       </Modal>
     )
 }
+
 
 const styles = StyleSheet.create({
     contenido: {
