@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import {
   SafeAreaView,
-  View,
   Text,
   StyleSheet,
   Pressable,

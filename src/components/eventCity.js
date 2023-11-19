@@ -11,8 +11,10 @@ const EventCity = ({
     setModalEventCity
 }) => {
 
-    const { eventCity: eventCity, fecha, id } = item
+    const { eventName, datePick, id } = item
 
+
+    console.log(item)
 
     return (
         <Pressable
@@ -23,8 +25,8 @@ const EventCity = ({
         >
             <View style={styles.contenedor}>
                 <Text style={styles.label}>Evento:</Text>
-                <Text style={styles.texto}>{eventCity}</Text>
-                <Text style={styles.fecha}>{formatearFecha(fecha)}</Text>
+                <Text style={styles.texto}>{eventName}</Text>
+                <Text style={styles.fecha}>{formatearFecha(datePick)}</Text>
 
                 <View style={styles.contenedorBotones}>
                     <Pressable 

@@ -1,23 +1,41 @@
-import React, { useState, useEffect } from 'react'
-import { Modal, Text,  SafeAreaView, StyleSheet, TextInput, View, ScrollView, Pressable, Alert } from 'react-native'
-import DatePicker from 'react-native-date-picker'
+import React, {useEffect, useState} from 'react'
+import {Alert, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native'
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const Formulario = ({
-    modalVisible, 
+    modalVisible,
     cerrarModal,
     eventsCity,
     setEventsCity,
     eventCity: eventCityObj,
     setEventCity: setEventCityApp
 }) => {
-    
+
     const [id, setId] = useState('')
     const [eventName, setEventName] = useState('')
     const [propietario, setPropietario] = useState('')
     const [email, setEmail] = useState('')
     const [telefono, setTelefono] = useState('')
-    const [fecha, setFecha] = useState(new Date())
-    const [descripcion, setDescripcion] = useState('')
+    const [datePick, setDatePick] = useState(new Date())
+    const [dateWithFormat, setDateWithFormat] = useState('')
+    const [showDatePick, setShowDatePick] = useState(false)
+    const [description, setDescription] = useState('')
+
+    // Formatea la fecha como una cadena legible
+    const changeDateWithFormat = () => {
+        const startDate = datePick;
+        setDateWithFormat(`${startDate.getDate()}-${startDate.getMonth() + 1}-${startDate.getFullYear()}`)
+    }
+
+    const toggleDatePick = () => {
+        setShowDatePick(!showDatePick)
+    }
+
+    const onChangeDatePick = ({ type }, selectedDate) => {
+        setDatePick(selectedDate)
+        changeDateWithFormat()
+        setShowDatePick(!showDatePick)
+    }
 
     useEffect(() => {
         if(Object.keys(eventCityObj).length > 0 ) {
@@ -26,15 +44,14 @@ const Formulario = ({
             setPropietario(eventCityObj.propietario)
             setEmail(eventCityObj.email)
             setTelefono(eventCityObj.telefono)
-            setFecha(eventCityObj.fecha)
-            setDescripcion(eventCityObj.descripcion)
+            setDatePick(eventCityObj.datePick)
+            setDescription(eventCityObj.description)
         }
     }, [eventCityObj])
 
-
     const handleEventCity = () => {
         // Validar
-        if([eventName, propietario, email, fecha, descripcion].includes('') ) {
+        if([eventName, propietario, email, datePick, description].includes('') ) {
             Alert.alert(
                 'Error',
                 'Todos los campos son obligatorios'
@@ -45,11 +62,11 @@ const Formulario = ({
         // Revisar si es un registro nuevo o edición
         const newEventCity = {
             eventName,
-            propietario, 
+            propietario,
             email,
-            telefono, 
-            fecha, 
-            descripcion: descripcion
+            telefono,
+            datePick,
+            description
         }
 
         if(id) {
@@ -71,8 +88,8 @@ const Formulario = ({
         setPropietario('')
         setEmail('')
         setTelefono('')
-        setFecha(new Date())
-        setDescripcion('')
+        setDatePick(new Date())
+        setDescription('')
 
     }
 
@@ -90,7 +107,7 @@ const Formulario = ({
                     <Text style={styles.tituloBold}>Evento</Text>
                 </Text>
 
-                <Pressable 
+                <Pressable
                     style={styles.btnCancelar}
                     onLongPress={() => {
                         cerrarModal()
@@ -100,8 +117,8 @@ const Formulario = ({
                         setPropietario('')
                         setEmail('')
                         setTelefono('')
-                        setFecha(new Date())
-                        setDescripcion('')
+                        setDatePick(new Date())
+                        setDescription('')
                     }}
                 >
                     <Text style={styles.btnCancelarTexto}>X Cancelar</Text>
@@ -110,9 +127,9 @@ const Formulario = ({
 
                 <View style={styles.campo}>
                     <Text style={styles.label}>Nombre del evento</Text>
-                    <TextInput 
+                    <TextInput
                         style={styles.input}
-                        placeholder='Nombre EventCity'
+                        placeholder='Nombre del evento'
                         placeholderTextColor={'#666'}
                         value={eventName}
                         onChangeText={setEventName}
@@ -120,10 +137,10 @@ const Formulario = ({
                 </View>
 
                 <View style={styles.campo}>
-                    <Text style={styles.label}>Nombre Propietario</Text>
-                    <TextInput 
+                    <Text style={styles.label}>Nombre del propietario</Text>
+                    <TextInput
                         style={styles.input}
-                        placeholder='Nombre Propietario'
+                        placeholder='Nombre del propietario'
                         placeholderTextColor={'#666'}
                         value={propietario}
                         onChangeText={setPropietario}
@@ -132,8 +149,8 @@ const Formulario = ({
 
 
                 <View style={styles.campo}>
-                    <Text style={styles.label}>Email Propietario</Text>
-                    <TextInput 
+                    <Text style={styles.label}>Email del propietario</Text>
+                    <TextInput
                         style={styles.input}
                         placeholder='Email Propietario'
                         placeholderTextColor={'#666'}
@@ -145,42 +162,53 @@ const Formulario = ({
 
                 <View style={styles.campo}>
                     <Text style={styles.label}>Teléfono Propietario</Text>
-                    <TextInput 
+                    <TextInput
                         style={styles.input}
                         placeholder='Teléfono Propietario'
                         placeholderTextColor={'#666'}
                         keyboardType='number-pad'
                         value={telefono}
                         onChangeText={setTelefono}
-                        maxLength={10}
+                        maxLength={9}
                     />
                 </View>
 
                 <View style={styles.campo}>
-                    <Text style={styles.label}>Fecha Alta</Text>
-                    
-                    <View style={styles.fechaContenedor}>
-                        {/*<DatePicker */}
-                        {/*    date={fecha}*/}
-                        {/*    locale='es'*/}
-                        {/*    onDateChange={ (date) => setFecha(date)}*/}
-                        {/*/>*/}
-                    </View>
+                    <Text style={styles.label}>Fecha del evento</Text>
+                    <Pressable onPress={ toggleDatePick }
+                    >
+                        <TextInput
+                            style={styles.input}
+                            placeholder= {dateWithFormat}
+                            placeholderTextColor={'#666'}
+                            value={dateWithFormat}
+                            onChangeText={setDatePick}
+                            editable={false}
+                        />
+                    </Pressable>
+
+                    {showDatePick && <DateTimePicker
+                        mode="date"
+                        display="spinner"
+                        value={datePick}
+                        locale='es'
+                        onChange={ onChangeDatePick }
+                    />}
                 </View>
 
                 <View style={styles.campo}>
                     <Text style={styles.label}>Descripcion</Text>
-                    <TextInput 
-                        style={[styles.input, styles.sintomasInput]}
+                    <TextInput
+                        style={[styles.input, styles.descriptionInput]}
                         placeholderTextColor={'#666'}
-                        value={descripcion}
-                        onChangeText={setDescripcion}
+                        value={description}
+                        onChangeText={setDescription}
                         multiline={true}
                         numberOfLines={4}
                     />
                 </View>
 
-                <Pressable 
+                <Pressable
                     style={styles.btnNewEvent}
                     onPress={handleEventCity}
                 >
@@ -238,7 +266,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 10
     },
-    sintomasInput: {
+    descriptionInput: {
         height: 100
     },
     fechaContenedor: {
