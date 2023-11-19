@@ -66,6 +66,7 @@ const InformationEventCity = ({eventCity, setEventCity, setModalEventCity}) => {
     )
 }
 
+
 const styles = StyleSheet.create({
     contenedor: {
         backgroundColor: '#F59E0B',
@@ -124,5 +125,6 @@ const styles = StyleSheet.create({
         color: '#334155'
     }
 })
+
 
 export default InformationEventCity
